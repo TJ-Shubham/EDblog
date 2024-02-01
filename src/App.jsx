@@ -1,8 +1,16 @@
+import { RouterProvider, createBrowserRouter } from "react-router-dom"
+import AppLayout from "./ui/AppLayout"
+
+const router = createBrowserRouter([
+  {
+    path:"/",
+    element: <AppLayout />
+  }
+])
 
 function App() {
-  return (
-    <h1 className="font-bold text-center">ED Blog</h1>
-  )
+
+  return <RouterProvider router={router} />
 }
 
 export default App
