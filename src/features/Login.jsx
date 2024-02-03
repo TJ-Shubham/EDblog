@@ -1,33 +1,32 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
-import { Link, useNavigate } from "react-router-dom"
-import authService from "../services/apiAuth";
-import { login } from "../app/authSlice";
+import { Link, useNavigate } from "react-router-dom";
+import apiAuth from "../services/apiAuth";
+import { login as authLogin } from "../app/authSlice";
 import Input from "../ui/Input";
 import Button from "../ui/Button";
 
-function Signup() {
 
-    const [error, setError] = useState("");
+function Login() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
     const {register, handleSubmit} = useForm();
+    const [error, setError] = useState("");
 
-    const createNewUser = async(data) => {
+    const login = async(data) => {
         setError("")
         try {
-            const newUserData = await authService.createAccount(data)
-            if(newUserData){
-                const userData = await authService.getCurrentUser()
-                if(userData) dispatch(login(newUserData));
-                navigate("/")
+            const session = await apiAuth.login(data);
+            if(session){
+                const userData = await apiAuth.getCurrentUser();
+                if(userData) dispatch(authLogin(userData));
+                navigate("/");
             }
         } catch (error) {
-            setError(error.message)
+            setError(error.message);
         }
     }
-
 
   return (
     <div className="flex items-center justify-center w-2/6 my-4">
@@ -39,23 +38,15 @@ function Signup() {
             </div>
             <h2 className="text-center text-2xl font-bold leading-tight">Sign up to create account</h2>
             <p className="mt-2 text-sm text-gray-600 text-center">
-                Already have an account?&nbsp;
-                <Link to="/login" className="text-blue-600 decoration-2 hover:underline font-medium dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600">
-                    Sign In here
+                Don&apos;t have any account?&nbsp;
+                <Link to="/signup" className="text-blue-600 decoration-2 hover:underline font-medium dark:focus:outline-none dark:focus:ring-1 dark:focus:ring-gray-600">
+                    Sign up here
                 </Link>
             </p>
             {error && <p className="text-red-600 mt-8 text-center">{error}</p>}
 
-            <form onSubmit={handleSubmit(createNewUser)}>
+            <form onSubmit={handleSubmit(login)}>
                 <div className='space-y-6 mt-5'>
-                    <Input
-                        label="Full Name: "
-                        className="border-gray-200 rounded-lg"
-                        placeholder="Enter your full name"
-                        {...register("name", {
-                            required: true,
-                        })}
-                    />
                     <Input
                         label="Email: "
                         className="border-gray-200 rounded-lg"
@@ -78,7 +69,7 @@ function Signup() {
                             required: true,})}
                     />
                     <Button type="submit" className="py-3 px-4 w-full gap-x-2 text-sm font-semibold rounded-lg border border-transparent bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:pointer-events-none">
-                        Create Account
+                        Sign in
                     </Button>
                 </div>
             </form>
@@ -88,4 +79,4 @@ function Signup() {
   )
 }
 
-export default Signup
+export default Login
